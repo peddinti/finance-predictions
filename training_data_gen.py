@@ -30,14 +30,14 @@ def symbol_data(symbol):
   num_days = 5 * 365
   end_date = datetime.datetime.today()
   start_date = end_date - datetime.timedelta(days=num_days)
-  t = {'symbol': symbol, 'data': share.get_historical(start_date.strftime("%Y-%m-%d"), end_date.strftime("%Y-%m-%d"))}
-  lock.acquire() 
-  print >> f,t
+  data = share.get_historical(start_date.strftime("%Y-%m-%d"), end_date.strftime("%Y-%m-%d"))
+  lock.acquire()
+  for point in data:
+    print >> f,",".join([point[key] for key in ['Volume', 'Symbol', 'Adj_Close', 'High', 'Low', 'Date', 'Close', 'Open']])
   lock.release()
 
 symbols = get_symbols()
-#symbols = symbols[:50]
+symbols = symbols[6000:]
 p = Pool(50)
 p.map(symbol_data, symbols)
-#json.dump(t, f)
 f.close()
